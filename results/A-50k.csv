@@ -1,0 +1,6 @@
+Label,# Samples,Average,Median,90% Line,95% Line,99% Line,Min,Max,Error %,Throughput,Received KB/sec,Sent KB/sec
+POST - Create a Movie,37500,7,7,9,10,11,0,32,0.000%,150.23376,47.39,57.22
+PUT - Update Movie,37496,7,8,10,10,11,0,33,0.000%,150.21894,47.38,37.26
+DELETE - Remove Test Movie,37489,4,4,6,6,7,0,28,0.000%,150.19270,11.88,32.12
+GET - List Movies,67591,6,6,8,8,10,0,32,0.000%,270.79402,2199.14,35.44
+TOTAL,180076,6,6,9,9,11,0,33,0.000%,721.41498,2305.69,162.03

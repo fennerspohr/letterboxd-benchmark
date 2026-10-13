@@ -13,8 +13,6 @@ kaggle.json
 data/*
 !data/.gitkeep
 
-# Resultados gerados
-results/*
 
 # Editor
 .vscode/
