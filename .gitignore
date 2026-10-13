@@ -1,0 +1,22 @@
+cat > .gitignore <<'EOF'
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Credenciais
+.env
+kaggle.json
+
+# Dados baixados
+data/*
+!data/.gitkeep
+
+# Resultados gerados
+results/*
+
+# Editor
+.vscode/
+.idea/
+EOF

@@ -1,0 +1,15 @@
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: letterboxd-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: benchmark_local
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
