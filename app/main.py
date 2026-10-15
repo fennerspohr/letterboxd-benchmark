@@ -119,7 +119,7 @@ def create_movie(movie: MovieCreate):
 @app.get("/movies", response_model=list[MovieResponse])
 def list_movies(
     skip: int = Query(default=0, ge=0),
-    limit: int = Query(default=20, ge=1, le=100),
+    limit: int = Query(default=20, ge=1, le=1000),
     year: Optional[int] = Query(default=None, ge=1800, le=2100),
     min_rating: Optional[float] = Query(default=None, ge=0, le=5),
 ):
