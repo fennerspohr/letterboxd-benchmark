@@ -1,15 +1,86 @@
+version: '3.8'
+
 services:
-  mongodb:
-    image: mongo:7.0
-    container_name: letterboxd-mongodb
-    restart: unless-stopped
+  # Load Balancer
+  nginx:
+    image: nginx:alpine
+    container_name: nginx_lb
     ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: benchmark_local
+      - "8000:80"
     volumes:
-      - mongodb_data:/data/db
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api1
+      - api2
+    networks:
+      - app_net
+
+  # Instâncias da API FastAPI (Stateless)
+  api1:
+    build: .
+    container_name: api_instance_1
+    environment:
+      - MONGO_URI=mongodb://mongo1:27017,mongo2:27017,mongo3:27017/?replicaSet=rs0&readPreference=secondaryPreferred&w=majority
+    depends_on:
+      - mongo-init
+    networks:
+      - app_net
+
+  api2:
+    build: .
+    container_name: api_instance_2
+    environment:
+      - MONGO_URI=mongodb://mongo1:27017,mongo2:27017,mongo3:27017/?replicaSet=rs0&readPreference=secondaryPreferred&w=majority
+    depends_on:
+      - mongo-init
+    networks:
+      - app_net
+
+  # MongoDB Replica Set (3 nós para quórum estrito)
+  mongo1:
+    image: mongo:7.0
+    container_name: mongo1
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    volumes:
+      - mongo1_data:/data/db
+    networks:
+      - app_net
+
+  mongo2:
+    image: mongo:7.0
+    container_name: mongo2
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    volumes:
+      - mongo2_data:/data/db
+    networks:
+      - app_net
+
+  mongo3:
+    image: mongo:7.0
+    container_name: mongo3
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    volumes:
+      - mongo3_data:/data/db
+    networks:
+      - app_net
+
+  # Inicializador automático do Replica Set
+  mongo-init:
+    image: mongo:7.0
+    restart: "no"
+    depends_on:
+      - mongo1
+      - mongo2
+      - mongo3
+    networks:
+      - app_net
+    entrypoint: [ "bash", "-c", "sleep 5 && mongosh --host mongo1:27017 --eval 'rs.initiate({_id: \"rs0\", members: [{_id: 0, host: \"mongo1:27017\"}, {_id: 1, host: \"mongo2:27017\"}, {_id: 2, host: \"mongo3:27017\"}]})'" ]
 
 volumes:
-  mongodb_data:
+  mongo1_data:
+  mongo2_data:
+  mongo3_data:
+
+networks:
+  app_net:
+    driver: bridge

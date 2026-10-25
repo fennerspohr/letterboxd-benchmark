@@ -7,12 +7,12 @@ from pydantic import BaseModel, Field
 from pymongo import MongoClient, ASCENDING, ReturnDocument
 from pymongo.errors import DuplicateKeyError
 
+
 MONGO_URI = os.getenv(
     "MONGO_URI",
-    "mongodb://admin:benchmark_local@localhost:27017/?authSource=admin",
+    "mongodb://mongo1:27017,mongo2:27017,mongo3:27017/?replicaSet=rs0&readPreference=secondaryPreferred&w=majority"
 )
-
-client = MongoClient(MONGO_URI)
+client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
 db = client["letterboxd"]
 movies = db["movies"]
 

@@ -81,3 +81,12 @@ Os resultados são coletados pelo JMeter e incluem:
 - **Taxa de erros:** proporção de requisições que falharam durante os testes.
 
 Essas métricas permitem comparar o comportamento do sistema nos diferentes cenários de carga e configurações de índice.
+
+# T2
+| Componente | Alteração |
+|---|---|
+| `scripts/import_dataset.py` | Mantido como importador direto para o MongoDB |
+| `scripts/import_dataset_http.py` | Criado para importar por HTTP |
+| `app/main.py` | Nenhuma alteração necessária no endpoint `POST /movies` |
+| Nginx | Utilizado como ponto de entrada das requisições |
+| MongoDB | Recebe os dados por meio das instâncias da API |
